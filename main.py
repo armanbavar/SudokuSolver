@@ -20,6 +20,10 @@ x = [1, 2, 3]
 y = [4, 5, 6]
 assert list(zip(x, y)) == [(1, 4), (2, 5), (3, 6)]
 
+assert ["1" * 3] == ["111"]
+
+assert max([1], [2, 2]) == [2, 2]
+assert max([1, 2, 3, 4]) == 4
 
 
 stringBoard = """
@@ -58,7 +62,6 @@ class Board():
 	def __init__(self, stringBoard):
 		super(Board, self).__init__()
 		self.stringBoard = stringBoard
-		print (self.stringBoard)
 
 		self.squares = []		
 		self.unitList = []
@@ -136,6 +139,18 @@ class Board():
 				return False ## (Fail if we can't assign d to square s.)
 		return values
 
+	def pretty_print(self, values):
+		"Display these values as a 2-D grid."
+		print ()
+		width = 1+max(len(values[s]) for s in self.squares)
+		line = '+'.join(['-' * (width * 3)] * 3)
+		for r in self.rows:
+			print (''.join(values[r+c].center(width) + ('|' if c in "36" else '') for c in Board.cols))
+			if r in "CF":
+				print (line)
+		print ()
+ 
 
 aVariable = Board('003020600900305001001806400008102900700000008006708200002609500800203009005010300')
-print (aVariable.parse_grid())
+result = aVariable.parse_grid()
+aVariable.pretty_print(result)
