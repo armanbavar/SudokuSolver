@@ -85,12 +85,11 @@ class Board():
 		return [a+b for a in A for b in B]
 
 	def __grid_values(self):
-		chars = [a for a in self.stringBoard if a in Board.numbers or a in ".0"]
+		chars = [a for a in self.stringBoard if a in Board.numbers or a in "0."]
 		assert len(chars) == 81
 		return dict(zip(self.squares, chars))
 
 	def __assign(self, values, s, d):
-		values = values
 		other_values = values[s].replace(d, '')
 		if all(self.__eliminate(values, s, d2) for d2 in other_values):
 			return values
@@ -98,7 +97,6 @@ class Board():
 			return False
 
 	def __eliminate(self, values, s, d):
-		values = values
 		"If number not exist in A1 : (123456789) "
 		if d not in values[s]:
 			return values
@@ -149,8 +147,40 @@ class Board():
 			if r in "CF":
 				print (line)
 		print ()
- 
 
-aVariable = Board('003020600900305001001806400008102900700000008006708200002609500800203009005010300')
-result = aVariable.parse_grid()
+	def solve(self) : return self.search(self.parse_grid())
+
+	def search(self, values):
+		if values is False:
+			return False
+
+		if all(len(values[s]) == 1 for s in self.squares):
+			return values
+
+		n,s = min((len(values[s]), s) for s in self.squares if len(values[s]) > 1)
+		return self.some(self.search(self.__assign(values.copy(), s, d))
+			for d in values[s])
+
+	def some(self, seq):
+		for e in seq:
+			if e:
+				return e
+		return False
+ 
+grid1 = """
+4 . . |. . . |8 . 5 
+. 3 . |. . . |. . . 
+. . . |7 . . |. . . 
+------+------+------
+. 2 . |. . . |. 6 . 
+. . . |. 8 . |4 . . 
+. . . |. 1 . |. . . 
+------+------+------
+. . . |6 . 3 |. 7 . 
+5 . . |2 . . |. . . 
+1 . 4 |. . . |. . . 
+"""
+#aVariable = Board('003020600900305001001806400008102900700000008006708200002609500800203009005010300')
+aVariable = Board(grid1)
+result = aVariable.solve()
 aVariable.pretty_print(result)
